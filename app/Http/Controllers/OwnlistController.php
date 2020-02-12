@@ -79,7 +79,8 @@ class OwnlistController extends Controller
                 echo json_encode((array)$return_err);
             } else {
                 $updatemsg = Ownlist::Where('id', $r['id'])->update(['title'=>$r['title'],'tododate'=>$r['tododate']]);
-                return $updatemsg;
+                $returnmsg=Ownlist::Where('id', $r['id'])->first();
+                return $returnmsg;
             }
         }
     }
@@ -108,7 +109,8 @@ class OwnlistController extends Controller
             echo json_encode((array)$create_return_errormsg);
         } else {
             $finishmsg = Ownlist::Where('id', $r['id'])->update(['finish' => true]);
-
+            $returnmsg=Ownlist::Where('id', $r['id'])->first();
+            return $returnmsg;
         }
     }
     public function showlist(Request $request)//------show所有代辦事項

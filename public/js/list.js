@@ -11,10 +11,10 @@ $.ajax({ //-----------------------------------------------------------代辦事�
     .done(function(data) {
         for (let value of data) {
             // 丟給 render function
-            if(value.finish==0){
-              addPost(value);
-            }else{
-              addfinishPost(value);
+            if (value.finish == 0) {
+                addPost(value);
+            } else {
+                addfinishPost(value);
             }
 
         }
@@ -35,8 +35,6 @@ $(document).ready(function() { //-----------------------------------------------
             })
             .done(function(data) {
                 if (data.id) {
-                    // document.getElementById("newmsg").reset();
-                    // $("#newmsg")[0].reset();
                     $("input").val("");
                     addPost(data);
 
@@ -67,6 +65,8 @@ $(document).ready(function() { //-----------------------------------------------
                     $("#modifymsg").find(":text,datetime-local").each(function() {
                         $(this).val("");
                     });
+                    var el = returnmsg.id;
+                    document.getElementById('show' + el).innerHTML = ' 帳號 : ' + returnmsg.email + '  , 應完成時間時間 ：' + returnmsg.tododate +  ' 標題 : '+ returnmsg.title +'';
                     alert("已修改")
 
                 }
@@ -76,6 +76,7 @@ $(document).ready(function() { //-----------------------------------------------
             })
     })
 });
+
 function updat(item) { //---------------------------------------------修改浮動視窗
     $.ajax({
             url: "/updat",
@@ -99,6 +100,7 @@ function updat(item) { //---------------------------------------------修改浮�
             alert("错誤");
         })
 }
+
 function finish(item) { //---------------------------------------------已完成按鈕
     $.ajax({
             url: "/finish",
@@ -112,6 +114,10 @@ function finish(item) { //---------------------------------------------已完成
             if (!finish.id) {
                 alert(finish.msg);
             } else {
+                var el = document.getElementById(item.id);
+                //console.log(item);
+                el.remove();
+                addfinishPost(finish);
                 alert("已完成該事項");
             }
         })
@@ -119,6 +125,7 @@ function finish(item) { //---------------------------------------------已完成
             alert("错誤");
         })
 }
+
 function addPost(returnmsg) {
     var item = '' +
         '<div class="panel panel-default" id=' + returnmsg.id + '>' +
@@ -127,12 +134,13 @@ function addPost(returnmsg) {
         ' 標題 : ' + returnmsg.title +
         '</h3>' +
         '<button type="button" class="btn btn-success pull-right" style="margin-top:-45px;" onclick="updat(' + returnmsg.id + ');">' + '編輯' + '</button>' +
-        '<button type="button" class="btn btn-danger pull-right"style="margin-right:80px;margin-top:-45px;" onclick="finish(' + returnmsg.id + ');">' + '已完成'+ '</button>' +
+        '<button type="button" class="btn btn-danger pull-right"style="margin-right:80px;margin-top:-45px;" onclick="finish(' + returnmsg.id + ');">' + '已完成' + '</button>' +
         '</div>' +
         '</div>';
-        $('#showownlist').append(item);
+    $('#showownlist').append(item);
 
 }
+
 function addfinishPost(returnmsg) {
     var item = '' +
         '<div class="panel panel-default" id=' + returnmsg.id + '>' +
@@ -140,10 +148,10 @@ function addfinishPost(returnmsg) {
         '<h3 class="panel-title" id="show' + returnmsg.id + '">' + ' 帳號 : ' + returnmsg.email + '  , 應完成時間時間 ：' + returnmsg.tododate + '<br><br>' +
         ' 標題 : ' + returnmsg.title +
         '</h3>' +
-        '<button type="button" class="btn btn-danger pull-right"style="margin-right:80px;margin-top:-45px;" ">' + '已完成'+ '</button>' +
+        '<button type="button" class="btn btn-danger pull-right"style="margin-right:80px;margin-top:-45px;" ">' + '已完成' + '</button>' +
         '</div>' +
         '</div>';
-        $('#showfinishownlist').append(item);
+    $('#showfinishownlist').append(item);
 
 }
 
