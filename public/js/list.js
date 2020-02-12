@@ -66,7 +66,8 @@ $(document).ready(function() { //-----------------------------------------------
                         $(this).val("");
                     });
                     var el = returnmsg.id;
-                    document.getElementById('show' + el).innerHTML = ' 帳號 : ' + returnmsg.email + '  , 應完成時間時間 ：' + returnmsg.tododate +  ' 標題 : '+ returnmsg.title +'';
+                    document.getElementById('show' + el).innerHTML = ' 帳號 : ' + returnmsg.email + '  , 應完成時間時間 ：' + returnmsg.tododate +
+                    '<br><br> 標題 : ' + returnmsg.title + '';
                     alert("已修改")
 
                 }
@@ -75,7 +76,53 @@ $(document).ready(function() { //-----------------------------------------------
                 alert("错誤");
             })
     })
+    $("#delemodify").click(function() { //----------------------------------------------------------刪除
+        var id = $(this).attr("name");
+        delet(id);
+    })
+
 });
+
+function Logout(item) {
+    $.ajax({
+            type: "get", //傳送方式
+            url: '/logout', //傳送目的地
+            dataType: "json", //資料格式
+
+        })
+        .done(function(returnmsg) {
+            location.href = "/login";
+        })
+        .fail(function(err) {
+            location.href = "/login";
+            alert("已登出");
+        })
+}
+
+function delet(item) {
+    $.ajax({
+            type: "post", //傳送方式
+            url: '/delet', //傳送目的地
+            dataType: "json", //資料格式
+            data: { //傳送資料
+                id: item,
+            }
+        })
+        .done(function(returnmsg) {
+            if (returnmsg.status) {
+                alert(returnmsg.msg);
+            } else {
+                var el = document.getElementById(returnmsg.id);
+                //console.log(item);
+                el.remove();
+
+            }
+        })
+        .fail(function(err) {
+            alert("错誤");
+        })
+
+}
 
 function updat(item) { //---------------------------------------------修改浮動視窗
     $.ajax({
@@ -90,6 +137,7 @@ function updat(item) { //---------------------------------------------修改浮�
             if (!update.id) {
                 alert(update.msg);
             } else {
+                document.getElementById('delemodify').name = update.id;
                 document.getElementById('modify').name = update.id;
                 document.getElementById('modaltitle').placeholder = update.title;
                 document.getElementById('modaldate').placeholder = update.tododate;
@@ -134,7 +182,7 @@ function addPost(returnmsg) {
         ' 標題 : ' + returnmsg.title +
         '</h3>' +
         '<button type="button" class="btn btn-success pull-right" style="margin-top:-45px;" onclick="updat(' + returnmsg.id + ');">' + '編輯' + '</button>' +
-        '<button type="button" class="btn btn-danger pull-right"style="margin-right:80px;margin-top:-45px;" onclick="finish(' + returnmsg.id + ');">' + '已完成' + '</button>' +
+        '<button type="button" class="btn btn-primary pull-right"style="margin-right:80px;margin-top:-45px;" onclick="finish(' + returnmsg.id + ');">' + '已完成' + '</button>' +
         '</div>' +
         '</div>';
     $('#showownlist').append(item);
@@ -148,7 +196,8 @@ function addfinishPost(returnmsg) {
         '<h3 class="panel-title" id="show' + returnmsg.id + '">' + ' 帳號 : ' + returnmsg.email + '  , 應完成時間時間 ：' + returnmsg.tododate + '<br><br>' +
         ' 標題 : ' + returnmsg.title +
         '</h3>' +
-        '<button type="button" class="btn btn-danger pull-right"style="margin-right:80px;margin-top:-45px;" ">' + '已完成' + '</button>' +
+        '<button type="button" class="btn btn-danger pull-right" style="margin-top:-45px;" id="delmodify" onclick="delet(' + returnmsg.id + ')">' + '刪除' + '</button>' +
+        '<button type="button" class="btn btn-primary pull-right"style="margin-right:80px;margin-top:-45px;" ">' + '已完成' + '</button>' +
         '</div>' +
         '</div>';
     $('#showfinishownlist').append(item);

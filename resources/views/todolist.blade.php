@@ -70,6 +70,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
                     <button type="button" class="btn btn-primary" id="modify" name="" data-dismiss="modal">修改</button>
+                    <button type="button" class="btn btn-danger" id="delemodify" name="" data-dismiss="modal">刪除</button>
                 </div>
               </form>
             </div>

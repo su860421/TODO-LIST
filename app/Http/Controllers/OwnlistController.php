@@ -42,10 +42,16 @@ class OwnlistController extends Controller
                 }
                 echo json_encode((array)$return_err);
             } else {
-                $pro = Ownlist::create($r);
-                //event(new \App\Events\($pro));//將資料傳送給事件--------尚未設定
-                $r['id']=$pro['id'];
-                echo json_encode((array)$r);
+                $date_test=date('Y-m-d H:i:s');
+                if (strtotime($date_test)>strtotime($r['tododate'])) {
+                    $create_return_errormsg['msg']="日期不得小於今天";
+                    return $create_return_errormsg;
+                } else {
+                    $pro = Ownlist::create($r);
+                    //event(new \App\Events\($pro));//將資料傳送給事件--------尚未設定
+                    $r['id']=$pro['id'];
+                    echo json_encode((array)$r);
+                }
             }
         }
     }
@@ -78,28 +84,33 @@ class OwnlistController extends Controller
                 }
                 echo json_encode((array)$return_err);
             } else {
-                $updatemsg = Ownlist::Where('id', $r['id'])->update(['title'=>$r['title'],'tododate'=>$r['tododate']]);
-                $returnmsg=Ownlist::Where('id', $r['id'])->first();
-                return $returnmsg;
+                $date_test=date('Y-m-d H:i:s');
+                if (strtotime($date_test)>strtotime($r['tododate'])) {
+                    $create_return_errormsg['msg']="日期不得小於今天";
+                    return $create_return_errormsg;
+                } else {
+                    $updatemsg = Ownlist::Where('id', $r['id'])->update(['title'=>$r['title'],'tododate'=>$r['tododate']]);
+                    $returnmsg=Ownlist::Where('id', $r['id'])->first();
+                    return $returnmsg;
+                }
             }
         }
     }
     public function updatlist(Request $request)//------調出需要修改的代辦事項內容
     {
-
-      $create_return_errormsg=array(
+        $create_return_errormsg=array(
          "status" => "false",
          "msg" => "",
       );
-      $r=$request->all();
+        $r=$request->all();
 
-      if ($r == null||empty($r) ||!isset($r)) {//
-          $create_return_errormsg['msg']="要加雙引號,逗號和{}";
-          echo json_encode((array)$create_return_errormsg);
-      } else {
-          $need_update_list = Ownlist::Where('id', $r['id'])->first();
-          return $need_update_list;
-      }
+        if ($r == null||empty($r) ||!isset($r)) {//
+            $create_return_errormsg['msg']="要加雙引號,逗號和{}";
+            echo json_encode((array)$create_return_errormsg);
+        } else {
+            $need_update_list = Ownlist::Where('id', $r['id'])->first();
+            return $need_update_list;
+        }
     }
     public function finishlist(Request $request)//------已完成事項
     {
@@ -113,6 +124,37 @@ class OwnlistController extends Controller
             return $returnmsg;
         }
     }
+    public function logout()
+    {
+        if (Auth::check()) {
+            Auth::logout();
+            $return_msg="已登出";
+            return $return_msg;
+        }
+    }
+    public function deletelist(Request $request)
+    {//刪除
+        $return_msg_info=array(
+      "status" => "ture",
+      "msg"    => "第"
+    );
+        $return_errmsg_info=array(
+      "status" => "false",
+      "msg"    => "錯誤訊息",
+    );
+        $return_err=array();
+        set_time_limit(0);//設定運行時間
+        //將資料由js轉成php
+        $r=$request->all();
+        if ($r == null||empty($r) ||!isset($r)) {//
+            $return_errmsg_info['msg']="要加雙引號,逗號和{}";
+            echo json_encode((array)$return_errmsg_info);
+        } else {
+            $log=Ownlist::where('id', $r['id'])->delete();
+            return json_encode((array)$r);//websocket還未設定刪除事件
+        }
+    }
+
     public function showlist(Request $request)//------show所有代辦事項
     {
         $create_return_errormsg=array(

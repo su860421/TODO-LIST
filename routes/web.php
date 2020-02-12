@@ -29,4 +29,6 @@ Route::post('/new','OwnlistController@newlist');
 Route::post('/finish','OwnlistController@finishlist');
 Route::get('/show','OwnlistController@showlist');
 Route::post('/updat','OwnlistController@updatlist');
+Route::post('/delet','OwnlistController@deletelist');
 Route::put('/update','OwnlistController@updatelist');
+Route::get('/logout','OwnlistController@logout');
